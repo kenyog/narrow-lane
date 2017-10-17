@@ -18,25 +18,62 @@ You can install the module in your project.
 $ npm install narrow-lane
 ```
 
+You can use it in 3 steps.
+1. Import this module, and make `lane` object.
+2. Make limited function from your function by a `narrowify` function of `lane` object.
+   `lane` object is able to narrowify multiple functions on same lane.
+3. You can use new limited function in the same manner as old one.
 
-This is an example of limiting execution of execFile.
+
+This is an example of limiting execution of asynchronous sleep function.
 ```javascript
-var lane = new nlane.lane(2);
-var nlexecFile = lane.promisify_narrower(cp.execFile);
+  // STEP 1 import the module and make lane object.
+  const nlane = require('narrow-lane');
+  var lane = new nlane.lane(2);
 
-p = [];
-p[0] = nlexecFile('sleep', ['5']);
-p[1] = nlexecFile('sleep', ['5']);
-p[2] = nlexecFile('sleep', ['5']);
-p[3] = nlexecFile('sleep', ['5']);
-p[4] = nlexecFile('sleep', ['5']);
+  // define `sleep'.
+  var start = new Date;
+  function sleep(msg, time)
+  {
+      // print message, sleep {time}seconds and print message.
+      console.log('%s before sleep at %d msec', msg, (new Date-start));
+      return timeout(time*1000).then( () => {
+          console.log('%s after sleep at %d msec', msg, (new Date-start));
+      });
+  }
 
-try {
-    var result = await Promise.all(p);
-    return result;
-} catch (e) {
-    return e;
-}
+  // STEP 2 make narrow-laned function `nlsleep` from the `sleep'.
+  var nlsleep = lane.narrowifyPromised(sleep);
+
+  // STEP 3 call `nlsleep' five times consecutively.
+  var p = [];
+  p[0] = nlsleep("A", 2);
+  p[1] = nlsleep("B", 2);
+  p[2] = nlsleep("C", 2);
+  p[3] = nlsleep("D", 2);
+  p[4] = nlsleep("E", 2);
+
+  // wait all asynchronous process.
+  Promise.all(p).then((result) => {
+      console.log(`finished. `);
+  }).catch((e) => {
+      console.log(`error: ${e}`);
+  });
 ```
-This example limits the execution of execFile function to 2 asynchronous processes.
-so the program takes 15 seconds.
+
+This example executes 2 sleep function at a time.
+The output is below.
+```
+$ node example/example_sleep.js
+A before sleep at 2 msec
+B before sleep at 4 msec
+A after sleep at 2008 msec
+B after sleep at 2008 msec
+C before sleep at 2008 msec
+D before sleep at 2008 msec
+C after sleep at 4010 msec
+D after sleep at 4010 msec
+E before sleep at 4010 msec
+E after sleep at 6016 msec
+finished. 
+```
