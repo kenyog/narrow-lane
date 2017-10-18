@@ -4,7 +4,7 @@
   "description": "the node.js module for limitation of asynchronous process to be executed concurrently.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava"
   },
   "repository": {
     "type": "git",
@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/kenyog/narrow-lane/issues"
   },
-  "homepage": "https://github.com/kenyog/narrow-lane#readme"
+  "homepage": "https://github.com/kenyog/narrow-lane#readme",
+  "devDependencies": {
+    "ava": "^0.22.0"
+  }
 }

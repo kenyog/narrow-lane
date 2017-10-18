@@ -22,12 +22,13 @@ narrow_lane.lane.prototype.checkAndRun = function() {
         let elm = this.queue.shift();
 
         if ( elm.c ) {
-            let param = elm.d.concat( (err, result) => {
-                if (err) this.totalRejected++;
-                else this.totalRejected++;
-                this.runCount--;
-                elm.c.apply(this, [err, result]);
-                this.checkAndRun();
+            let _this=this;
+            let param = elm.d.concat( function(err) {
+                if (err) _this.totalRejected++;
+                else _this.totalRejected++;
+                _this.runCount--;
+                elm.c.apply(this, Array.from(arguments));
+                _this.checkAndRun();
             });
             elm.f.apply(elm.t, param);
         } else {
