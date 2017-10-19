@@ -3,23 +3,23 @@
 const test = require('ava');
 const nl = require('../index.js');
 
-const util = require('util');
-const timeout = util.promisify(setTimeout);
 
 
 /////////////////////////////////////////////////////////
 // Definition of stub functions for test.
 
 function t1() { // simple promise function for test.
-    return timeout(1);
+    return new Promise( (resolve)=> {
+        setTimeout(() => {
+            resolve();
+        }, 1);
+    });
 }
 
 function t1cb(cb) { // simple callback function for test.
-    timeout(1).then( ()=> {
+    setTimeout( ()=> {
         cb(null, "ok");
-    }).catch( (e) => {
-        cb(e);
-    });
+    }, 1);
 }
 
 /////////////////////////////////////////////////////////
@@ -85,14 +85,17 @@ test( async function methodtest_for_getLength4(t) {
         var l = new nl.lane(w);
         var nt1 = l.narrowifyPromised(t1);
         var nt1cb = l.narrowifyCallbacker(t1cb);
-        var pnt1cb = util.promisify(nt1cb);
         var p = [];
 
         t.is(l.getLength(), 0);
         for ( let i=0; i<100; i++ )
         {
             p.push(nt1());
-            p.push(pnt1cb());
+            p.push( new Promise((resolve)=>{
+                nt1cb( () => {
+                    resolve();
+                });
+            }));
         }
         t.is(l.getLength(), 200);
 
