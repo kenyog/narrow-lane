@@ -1,4 +1,6 @@
 # narrow-lane
+[![Build Status](https://travis-ci.org/kenyog/narrow-lane.svg?branch=master)](https://travis-ci.org/kenyog/narrow-lane)
+
 node.js module for limitation of asynchronous process to be executed concurrently
 
 
@@ -79,4 +81,3 @@ finished.
 ```
 
 
-[![Build Status](https://travis-ci.org/kenyog/narrow-lane.svg?branch=master)](https://travis-ci.org/kenyog/narrow-lane)
