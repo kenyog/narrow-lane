@@ -80,4 +80,8 @@ E after sleep at 6016 msec
 finished. 
 ```
 
+# examples
 
+* [example_lookup.js](example/example_lookup.js): example of using callback type function.
+* [example_sleep.js](example/example_sleep.js): example of using promise function.
+* [example_convert.js](example/example_convert.js): example of using Imagemagick convert command. it's a first motivation to make this module.
